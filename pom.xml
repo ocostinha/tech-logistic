@@ -10,7 +10,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.fiap.tech</groupId>
-    <artifactId>restaurante</artifactId>
+    <artifactId>tech-logistic</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>restaurante</name>
     <description>Projeto de restaurante para o Pós Tech</description>
