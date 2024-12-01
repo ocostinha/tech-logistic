@@ -32,6 +32,8 @@ public class OrderDTO {
 
     private String status;
 
+    private Boolean cancelled;
+
     @Getter
     @Setter
     @AllArgsConstructor

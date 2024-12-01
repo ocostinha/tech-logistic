@@ -1,5 +1,6 @@
 package com.fiap.tech.tech_logistic.repository.repository;
 
+import com.fiap.tech.tech_logistic.core.exception.NotFoundException;
 import com.fiap.tech.tech_logistic.core.repository.DeliveryRepository;
 import com.fiap.tech.tech_logistic.domain.delivery.Delivery;
 import com.fiap.tech.tech_logistic.repository.adapter.DeliveryAdapter;
@@ -20,11 +21,24 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     private final DeliveryAdapter deliveryAdapter = DeliveryAdapter.INSTANCE;
 
     @Override
-    public Delivery save(final Delivery order) {
+    public Delivery save(final Delivery delivery) {
         return deliveryAdapter.fromEntity(
                 deliveryJpaRepository.save(
                         deliveryAdapter.toEntity(
-                                order
+                                delivery
+                        )
+                )
+        );
+    }
+
+    @Override
+    public Delivery update(final Delivery delivery) {
+        return deliveryAdapter.fromEntity(
+                deliveryJpaRepository.save(
+                        deliveryAdapter.update(
+                                deliveryJpaRepository.findById(delivery.getId()).orElseThrow(
+                                        () -> new NotFoundException("Pedido não encontrado")),
+                                delivery
                         )
                 )
         );
@@ -51,6 +65,15 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
         return deliveryJpaRepository.findByDriverIdIsNull().stream()
                 .map(deliveryAdapter::fromEntity)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Optional<Delivery> findByOrderId(final Long orderId) {
+        return Optional.ofNullable(
+                deliveryAdapter.fromEntity(
+                        deliveryJpaRepository.findByOrderId(orderId).orElse(null)
+                )
+        );
     }
 
 }

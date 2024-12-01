@@ -19,13 +19,13 @@ public class Delivery {
 
     private Long orderId;
 
-    private LocalDateTime deliveryDateTime;
+    private LocalDateTime deliveryDate;
 
-    private LocalDateTime collectDateTime;
+    private LocalDateTime collectDate;
 
-    private LocalDateTime deliveredDateTime;
+    private LocalDateTime deliveredDate;
 
-    private LocalDateTime cancelledDateTime;
+    private LocalDateTime cancelledDate;
 
     private List<DeliveryItem> items;
 

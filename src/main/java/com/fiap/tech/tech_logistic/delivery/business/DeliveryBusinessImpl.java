@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -26,14 +27,19 @@ public class DeliveryBusinessImpl implements DeliveryBusiness {
     }
 
     @Override
-    public void updateDelivery(final Delivery delivery) {
-        deliveryRepository.save(delivery);
+    public Delivery updateDelivery(final Delivery delivery) {
+        return deliveryRepository.update(delivery);
     }
 
     @Override
     public Delivery getDelivery(final Long deliveryId) {
         return deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new BusinessException("Entrega não encontrada"));
+    }
+
+    @Override
+    public Optional<Delivery> getDeliveryByOrder(final Long orderId) {
+        return deliveryRepository.findByOrderId(orderId);
     }
 
     @Override
@@ -52,7 +58,7 @@ public class DeliveryBusinessImpl implements DeliveryBusiness {
 
         delivery.setDriverId(driverId);
         delivery.setStatus(Status.COLLECTED);
-        delivery.setCollectDateTime(LocalDateTime.now());
+        delivery.setCollectDate(LocalDateTime.now());
 
         updateDelivery(delivery);
 
@@ -63,8 +69,16 @@ public class DeliveryBusinessImpl implements DeliveryBusiness {
     public void cancelDelivery(final Long deliveryId) {
         Delivery delivery = getDelivery(deliveryId);
 
+        if (delivery.getStatus().equals(Status.DELIVERED)) {
+            throw new BusinessException("Entrega já foi finalizada");
+        }
+
+        if (delivery.getStatus().equals(Status.CANCELLED)) {
+            throw new BusinessException("Entrega já foi cancelada");
+        }
+
         delivery.setStatus(Status.CANCELLED);
-        delivery.setCancelledDateTime(LocalDateTime.now());
+        delivery.setCancelledDate(LocalDateTime.now());
 
         updateDelivery(delivery);
 
@@ -74,6 +88,10 @@ public class DeliveryBusinessImpl implements DeliveryBusiness {
     @Override
     public void startDeliveryRoute(final Long deliveryId) {
         Delivery delivery = getDelivery(deliveryId);
+
+        if (delivery.getDriverId() == null) {
+            throw new BusinessException("Entrega não possui motorista");
+        }
 
         delivery.setStatus(Status.IN_TRANSPORT);
 
@@ -86,8 +104,12 @@ public class DeliveryBusinessImpl implements DeliveryBusiness {
     public void terminateDeliveryRoute(final Long deliveryId) {
         Delivery delivery = getDelivery(deliveryId);
 
+        if (!delivery.getStatus().equals(Status.IN_TRANSPORT)) {
+            throw new BusinessException("Entrega deve estar em andamento para ser finalizada");
+        }
+
         delivery.setStatus(Status.DELIVERED);
-        delivery.setDeliveredDateTime(LocalDateTime.now());
+        delivery.setDeliveredDate(LocalDateTime.now());
 
         updateDelivery(delivery);
 

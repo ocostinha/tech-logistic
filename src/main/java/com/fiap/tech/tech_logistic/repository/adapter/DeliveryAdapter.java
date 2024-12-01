@@ -6,6 +6,7 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
@@ -25,5 +26,9 @@ public interface DeliveryAdapter {
         deliveryEntity.getItems().forEach(orderItem -> orderItem.setDelivery(deliveryEntity));
         deliveryEntity.getAddress().setDelivery(deliveryEntity);
     }
+
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    DeliveryEntity update(@MappingTarget DeliveryEntity persistedDelivery, Delivery delivery);
 
 }

@@ -36,19 +36,20 @@ public class DeliveryEntity {
 
     private Long orderId;
 
-    @OneToMany(mappedBy = "delivery", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "delivery", fetch = FetchType.EAGER, cascade = CascadeType.ALL,
+               orphanRemoval = true)
     private Set<ItemEntity> items;
 
     @OneToOne(mappedBy = "delivery", cascade = CascadeType.ALL)
     private AddressEntity address;
 
-    private LocalDateTime deliveryDateTime;
+    private LocalDateTime deliveryDate;
 
-    private LocalDateTime collectDateTime;
+    private LocalDateTime collectDate;
 
-    private LocalDateTime deliveredDateTime;
+    private LocalDateTime deliveredDate;
 
-    private LocalDateTime cancelledDateTime;
+    private LocalDateTime cancelledDate;
 
     private String note;
 
